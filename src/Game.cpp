@@ -13,7 +13,7 @@ Game::Game()
 Game::~Game()
 {}
 
-void Game::init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen){
+void Game::init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen, const char* icon_path){
 	int flags = 0;
 	if (fullscreen){ 
 		flags = SDL_WINDOW_FULLSCREEN;
@@ -38,9 +38,12 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 		isRunning = false;
 	} 
 
+ 	SDL_Surface* tempSurface = IMG_Load(icon_path);
+	SDL_SetWindowIcon(window,tempSurface);
+
 
 	player = new Player();
-	map = new Map(renderer, "assets/lvls/lvl_0.txt",20, 25);
+	map = new Map(renderer, "./assets/lvls/lvl_0.txt",20, 25);
 	player -> Init(renderer, 100, 10, WIDTH_PLAYER, HEIGHT_PLAYER, NULL ,SDL_FLIP_NONE);
 	
 }
@@ -109,11 +112,11 @@ void Game::render()
 
 	//SDL_RenderCopy(renderer,player->getImage(),NULL,&destR);
 	map -> DrawMap(renderer);
+	player -> render(renderer,0);
 	map ->Collision(renderer,player);
 
 	//SDL_RenderCopy(renderer,playerText,NULL,&destR);
 	//
-	player -> render(renderer,0);
 	SDL_RenderPresent(renderer);
 
 }

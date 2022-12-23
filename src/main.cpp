@@ -1,5 +1,6 @@
 #include "Game.hpp"
 
+
 Game *game = nullptr;
 //Player *player = nullptr;
 int main(int argv, char** args)
@@ -11,17 +12,21 @@ int main(int argv, char** args)
 	Uint32 frameStart;
 	int frameTime;
 
-	game = new Game();
-	game -> init("Hugo The Game 3", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 32*25, 32*20, false );
 
-	std::cout << "MAP";
+ 	const char* name =  "HUGO GAME 1";//std::getenv("NAME");
+	const char* icon_path = "./assets/paty.png";
+
+	std::cout << name;
+
+	game = new Game();
+	game -> init(name, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 32*25, 32*20, false, icon_path);
+
 
 	while (game -> running()){
 		frameStart = SDL_GetTicks();
-		game -> update();
 		game -> handleEvents();
 		game -> render();
-
+		game -> update();
 		frameTime = SDL_GetTicks() - frameStart;
 		if (frameDelay > frameTime)
 		{

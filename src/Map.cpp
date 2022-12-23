@@ -6,6 +6,7 @@
 #include <fstream>
 
 using std::string;
+using std::ifstream;
 
 int lvl1[20][25] = {
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
@@ -29,7 +30,6 @@ int lvl1[20][25] = {
     {0,0,0,0,0,0,0,0,0,0,0,0,2,1,0,0,0,0,0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 };
-
 
 
 int lvl2[20][25] = {
@@ -64,12 +64,20 @@ Map::~Map()
 
 Map::Map(SDL_Renderer* renderer, std::string path, int height, int width)
 {
-    background = TextureManager::LoadTexture("assets/tiles.png",renderer);
+    std::cout<<"test2"<<std::endl;
+    background = TextureManager::LoadTexture("./assets/tiles.png",renderer);
+    std::cout<<"test3"<<std::endl;
+
     //LoadMap(lvl1);
     /*
         LEER UN ARCHIVO Y CARGARLO EN EL ARRAY DE MAP
     */
-    LoadMapWithFile(path, height,width);
+    //create map
+    std::cout << path << height << width << std::endl;
+    LoadMapWithFile(path,height,width);
+
+    std::cout<<"test4.5"<<std::endl;
+
     int positions[4][2] = {
         {0,0},
         {32,0},
@@ -123,37 +131,15 @@ void Map::LoadMap(int arr[20][25])
 }
 
 
-void Map::LoadMapWithFile(std::string path, int height, int width){
-    /*
-        Load Map with file.txt from assets/lvls
+void Map::LoadMapWithFile(string path, int height, int width){
 
-        ################# LVL 1  TO TEST #################
-        {1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,1,1,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,3,3,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,2,1,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,2,1,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    */
+    ifstream myfile;
+	std::cout << "test34.5 333";
 
-std::ifstream myfile;
-    myfile.open (path);
+    myfile.open(path);
     string mapText [20][25];  
     string line;  
+	std::cout << "test4";
 
     std::vector<string> lines;
 
@@ -228,43 +214,47 @@ void Map::DrawMap(SDL_Renderer* renderer)
 
 void Map::Collision(SDL_Renderer* renderer,Player* player) {
     /*
-        DETECCION DE COLISIONES
+        DETECT COLLISION
     */
-    SDL_Rect tileLeft, tileRight, tileUp, tileDown;
-
-    //std::cout << "tile X: " << (player->getX() + 32) / 32 << std::endl;
-    //std::cout << "tile Y: " << (player->getY() + 32) / 32 << std::endl;
-
     int y1 = (player->getY() + 32 )  / 32;
-    int x1= (player->getX() + 32)  / 32;
-
-    int rowLeft = player->getY() /32;
-    int columnLeft = (player->getX()) /32;
+    int x1 = (player->getX() + 32)  / 32;
 
 
-    tileLeft.x = columnLeft*32;
-    tileLeft.y = rowLeft*32;
-    tileLeft.h = TILE_SIZE;
-    tileLeft.w = TILE_SIZE;
+    std::cout << "X1: " << x1 << " Y1:" << y1 << std::endl;
 
-    tileRight.x = x1 * 32;
-    tileRight.y = y1 *32;
-    tileRight.h = TILE_SIZE;
-    tileRight.w = TILE_SIZE;
+    //limit screen
+    if (x1 > 24) {
+        player -> setX(24 * 32);
+    } else if (x1 < 1) {
+        player -> setX(1);
+    }
 
-    tileUp.x = x1 * 32;
-    tileUp.y = (y1  * 32)- 32;
-    tileUp.h = TILE_SIZE;
-    tileUp.w = TILE_SIZE;
+    if (y1 > 19) {
+        player -> setY((y1 -1) * 32);
+    } else if (y1 < 1) {
+        player -> setY(0);
+    }
+    if (player ->getDirections()[1] == true || player ->getDirections()[0] == true) {
+        if (map[y1][x1 -1] == WALL ||  map[y1 -1][x1 -1] == WALL || map[y1 +1][x1 -1] == WALL) {
+            std::cout << "Colision" << std::endl;
+                player -> setX(x1 * 32);
+            player -> setX(x1 * 32);
+        } else if (map[y1][x1 +1] == WALL || map[y1 -1][x1 +1] == WALL || map[y1 +1][x1 +1] == WALL) {
+            std::cout << "Colision" << std::endl;
+            player -> setX((x1-1) * 32);
+        }
+    }
+   /*
+        COLLISSION WITH TILES
 
-    tileDown.x = x1 * 32;
-    tileDown.y = (y1 * 32);
-    tileDown.h = TILE_SIZE;
-    tileDown.w = TILE_SIZE;
+        WALL
+    */
 
 
-        if (map[y1][x1] == WALL) {
-            if (SDL_HasIntersection(&player ->destR, &tileRight)) {
+
+    /*
+    if (map[y1][x1] == WALL) {
+        if (SDL_HasIntersection(&player ->destR, &tileRight)) {
                 //rigth
                 std::cout << "right" << std::endl;
                 if (player ->getX() + WIDTH_PLAYER > tileRight.x && player ->getX() < tileRight.x) {
@@ -272,50 +262,40 @@ void Map::Collision(SDL_Renderer* renderer,Player* player) {
                 } 
             }
 
-
-        }
-
-        if (map[y1][x1 - 1] == WALL) {
-            if (SDL_HasIntersection(&player ->destR, &tileLeft)) {
+        if (SDL_HasIntersection(&player ->destR, &tileLeft)) {
                 //left
                 std::cout << "left" << std::endl;
                 if (player ->getX() < tileLeft.x + TILE_SIZE && player ->getX() + WIDTH_PLAYER > tileLeft.x + TILE_SIZE) {
                     player ->setX(tileLeft.x + TILE_SIZE);
                 }
             }
-        }
 
-
-
-        if (map[y1 -1][x1] == WALL) {
-            if (SDL_HasIntersection(&player ->destR, &tileUp)) {
+        if (SDL_HasIntersection(&player ->destR, &tileUp)) {
                 //up
                 std::cout << "up" << std::endl;
                 if (player ->getY() < tileUp.y + TILE_SIZE && player ->getY() + HEIGHT_PLAYER > tileUp.y + TILE_SIZE) {
                     player ->setY(tileUp.y + TILE_SIZE);
                 }
             }
-        }
 
-        if (map[y1 + 1][x1] == WALL) {
-            if (SDL_HasIntersection(&player ->destR, &tileDown)) {
+        if (SDL_HasIntersection(&player ->destR, &tileDown)) {
                 //down
                 std::cout << "down" << std::endl;
                 if (player ->getY() + HEIGHT_PLAYER > tileDown.y && player ->getY() < tileDown.y) {
                     player ->setY(tileDown.y - HEIGHT_PLAYER);
                 }
-            }
         }
 
+    }
+        SDL_RenderDrawRect(renderer, &tileUp);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+
+    */
     //draw left and right rect
-    SDL_RenderDrawRect(renderer, &tileRight);
-    SDL_RenderDrawRect(renderer, &tileLeft);
-    SDL_RenderDrawRect(renderer, &tileUp);
-    SDL_RenderDrawRect(renderer, &tileDown);
-
-    //color
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-
+    //SDL_RenderDrawRect(renderer, &tileRight);
+    //SDL_RenderDrawRect(renderer, &tileLeft);
+    //SDL_RenderDrawRect(renderer, &tileDown);
+    //color down blue
 
    // crear una area de colision tiles alrededor del player
 

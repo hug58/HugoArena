@@ -86,8 +86,6 @@ int Sprite::getSpeed(){
     return this -> speed;
 }
 
-
-
 SDL_Texture* Sprite::getImage(){
     return this -> image;
 }
@@ -114,7 +112,6 @@ bool *Player::getDirections(){
     return this -> directions;
 }
 
-
 int Player::getX(){
     return this -> destR.x;
 }
@@ -122,7 +119,6 @@ int Player::getX(){
 int Player::getY(){
     return this -> destR.y;
 }
-
 
 int Player::setX(int x){
     this -> destR.x = x;

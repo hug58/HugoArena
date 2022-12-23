@@ -14,7 +14,8 @@ class Game{
 			int ypos, 
 			int width, 
 			int height, 
-			bool fullscreen
+			bool fullscreen,
+			const char * icon_path
 		);
 
 		
