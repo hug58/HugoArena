@@ -2,7 +2,7 @@
 #include "Player.hpp"
 #include <iostream>
 
-#define SPEED_SPRITE 5
+#define SPEED_SPRITE 4
 
 //SDL_Texture* playerText;
 SDL_Rect srcR,destR;

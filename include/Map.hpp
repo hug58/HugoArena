@@ -4,6 +4,7 @@
 #include "Game.hpp"
 #include "Player.hpp"
 #include <map>
+#include <vector>
 
 /*
     clase mapa par en cuadrillas de 0 y 1
@@ -45,7 +46,14 @@ class Map
         SDL_Texture* grass;
         SDL_Texture* water;
         SDL_Renderer* rendererMap;
+
+        std::vector<SDL_Rect> obstacles;
+
+
         int map[20][25];
+
+
+
         //int** map;
         std::map<int, int> tilesX;
         std::map<int, int> tilesY;

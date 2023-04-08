@@ -4,6 +4,8 @@
 #include "Tile.hpp"
 #include <vector>
 #include <fstream>
+#include <cmath>
+
 
 using std::string;
 using std::ifstream;
@@ -64,9 +66,7 @@ Map::~Map()
 
 Map::Map(SDL_Renderer* renderer, std::string path, int height, int width)
 {
-    std::cout<<"test2"<<std::endl;
     background = TextureManager::LoadTexture("./assets/tiles.png",renderer);
-    std::cout<<"test3"<<std::endl;
 
     //LoadMap(lvl1);
     /*
@@ -75,8 +75,6 @@ Map::Map(SDL_Renderer* renderer, std::string path, int height, int width)
     //create map
     std::cout << path << height << width << std::endl;
     LoadMapWithFile(path,height,width);
-
-    std::cout<<"test4.5"<<std::endl;
 
     int positions[4][2] = {
         {0,0},
@@ -134,12 +132,10 @@ void Map::LoadMap(int arr[20][25])
 void Map::LoadMapWithFile(string path, int height, int width){
 
     ifstream myfile;
-	std::cout << "test34.5 333";
 
     myfile.open(path);
     string mapText [20][25];  
     string line;  
-	std::cout << "test4";
 
     std::vector<string> lines;
 
@@ -156,6 +152,12 @@ void Map::LoadMapWithFile(string path, int height, int width){
             {
                 if (lines[i][j] == '0') {
                     map[i][j] = STONE;
+                    SDL_Rect stone;
+                    stone.x = j * 32;
+                    stone.y = i * 32;
+                    stone.w = 32;
+                    stone.h = 32;
+                    this->obstacles.push_back({stone});
                 }
                 else if (lines[i][j] == '1') {
                     map[i][j] = EARTH;
@@ -165,6 +167,15 @@ void Map::LoadMapWithFile(string path, int height, int width){
                 }
                 else if (lines[i][j] == '3') {
                     map[i][j] = WALL;
+
+                    //CREATE A RECT 
+                    /**/
+                    SDL_Rect wall;
+                    wall.x = j * 32;
+                    wall.y = i * 32;
+                    wall.w = 32;
+                    wall.h = 32;
+                    this->obstacles.push_back({wall});
                 }
             }
         }
@@ -220,7 +231,7 @@ void Map::Collision(SDL_Renderer* renderer,Player* player) {
     int x1 = (player->getX() + 32)  / 32;
 
 
-    std::cout << "X1: " << x1 << " Y1:" << y1 << std::endl;
+    //std::cout << "X1: " << x1 << " Y1:" << y1 << std::endl;
 
     //limit screen
     if (x1 > 24) {
@@ -234,70 +245,46 @@ void Map::Collision(SDL_Renderer* renderer,Player* player) {
     } else if (y1 < 1) {
         player -> setY(0);
     }
-    if (player ->getDirections()[1] == true || player ->getDirections()[0] == true) {
-        if (map[y1][x1 -1] == WALL ||  map[y1 -1][x1 -1] == WALL || map[y1 +1][x1 -1] == WALL) {
-            std::cout << "Colision" << std::endl;
-                player -> setX(x1 * 32);
-            player -> setX(x1 * 32);
-        } else if (map[y1][x1 +1] == WALL || map[y1 -1][x1 +1] == WALL || map[y1 +1][x1 +1] == WALL) {
-            std::cout << "Colision" << std::endl;
-            player -> setX((x1-1) * 32);
+
+for (int i = 0; i < this->obstacles.size(); i++)
+{
+    SDL_Rect obstacle = this->obstacles[i];
+    SDL_Rect playerRect = { player->getX(), player->getY(), 32, 32 };
+
+    if (SDL_HasIntersection(&obstacle, &playerRect)) {
+
+        // Calcular el vector de separación
+        float dx = obstacle.x + obstacle.w / 2 - (player->destR.x + player->destR.w / 2);
+        float dy = obstacle.y + obstacle.h / 2 - (player->destR.y + player->destR.h / 2);
+        float distance = sqrt(dx * dx + dy * dy);
+
+        float width = player->destR.w;
+        float height = player->destR.h;
+        float radiusPlayer = sqrt(width * width + height * height) / 2.0f;
+
+        //radius obstacle
+        float widthO = obstacle.w;
+        float heightO = obstacle.h;
+        float radiusObstacle = sqrt(widthO * widthO + heightO * heightO) / 2.0f;
+
+
+        float radiusSum = radiusObstacle + radiusPlayer;
+
+        if (distance >= radiusSum) {
+            // No hay colisión, salir
+            return;
         }
-    }
-   /*
-        COLLISSION WITH TILES
+        float separation = radiusSum - distance;
+        dx /= distance;
+        dy /= distance;
 
-        WALL
-    */
+        // Ajustar las posiciones de los objetos
+        player->destR.x -= dx * separation * 0.5f;
+        player->destR.y -= dy * separation * 0.5f;
 
-
-
-    /*
-    if (map[y1][x1] == WALL) {
-        if (SDL_HasIntersection(&player ->destR, &tileRight)) {
-                //rigth
-                std::cout << "right" << std::endl;
-                if (player ->getX() + WIDTH_PLAYER > tileRight.x && player ->getX() < tileRight.x) {
-                    player ->setX(tileRight.x -WIDTH_PLAYER);
-                } 
-            }
-
-        if (SDL_HasIntersection(&player ->destR, &tileLeft)) {
-                //left
-                std::cout << "left" << std::endl;
-                if (player ->getX() < tileLeft.x + TILE_SIZE && player ->getX() + WIDTH_PLAYER > tileLeft.x + TILE_SIZE) {
-                    player ->setX(tileLeft.x + TILE_SIZE);
-                }
-            }
-
-        if (SDL_HasIntersection(&player ->destR, &tileUp)) {
-                //up
-                std::cout << "up" << std::endl;
-                if (player ->getY() < tileUp.y + TILE_SIZE && player ->getY() + HEIGHT_PLAYER > tileUp.y + TILE_SIZE) {
-                    player ->setY(tileUp.y + TILE_SIZE);
-                }
-            }
-
-        if (SDL_HasIntersection(&player ->destR, &tileDown)) {
-                //down
-                std::cout << "down" << std::endl;
-                if (player ->getY() + HEIGHT_PLAYER > tileDown.y && player ->getY() < tileDown.y) {
-                    player ->setY(tileDown.y - HEIGHT_PLAYER);
-                }
-        }
 
     }
-        SDL_RenderDrawRect(renderer, &tileUp);
-        SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-
-    */
-    //draw left and right rect
-    //SDL_RenderDrawRect(renderer, &tileRight);
-    //SDL_RenderDrawRect(renderer, &tileLeft);
-    //SDL_RenderDrawRect(renderer, &tileDown);
-    //color down blue
-
-   // crear una area de colision tiles alrededor del player
-
+}
+    
 }
 

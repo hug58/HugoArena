@@ -13,7 +13,7 @@ int main(int argv, char** args)
 	int frameTime;
 
 
- 	const char* name =  "HUGO GAME 1";//std::getenv("NAME");
+ 	const char* name =  "GAME Test";//std::getenv("NAME");
 	const char* icon_path = "./assets/paty.png";
 
 	std::cout << name;

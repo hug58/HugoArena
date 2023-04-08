@@ -62,12 +62,19 @@ void Game::handleEvents()
 			//rigth
 			if (event.key.keysym.sym == SDLK_RIGHT){
 				player -> setRigth(true);
+				//player->destR.x += player->getSpeed();
+
 			}else if (event.key.keysym.sym == SDLK_LEFT){
 				player -> setLeft(true);
+				//player->destR.x -= player->getSpeed();
+
 			} else if (event.key.keysym.sym == SDLK_UP){
 				player -> setUp(true);
+				//player->destR.y -= player->getSpeed();
+
 			} else if (event.key.keysym.sym == SDLK_DOWN){
 				player -> setDown(true);
+				//player->destR.y += player->getSpeed();
 			}
 			break;
 
@@ -81,6 +88,7 @@ void Game::handleEvents()
 				isRunning = false;
 			} else if (event.key.keysym.sym == SDLK_UP){
 				player -> setUp(false);
+
 			} else if (event.key.keysym.sym == SDLK_DOWN){
 				player -> setDown(false);
 			}
@@ -94,7 +102,6 @@ void Game::handleEvents()
 
 void Game::update()
 {
-
 	if (player -> getDirections()[0]){
 		player -> move(player -> getSpeed(),0);
 	}else if (player -> getDirections()[1]){
@@ -112,8 +119,8 @@ void Game::render()
 
 	//SDL_RenderCopy(renderer,player->getImage(),NULL,&destR);
 	map -> DrawMap(renderer);
-	player -> render(renderer,0);
 	map ->Collision(renderer,player);
+	player -> render(renderer,0);
 
 	//SDL_RenderCopy(renderer,playerText,NULL,&destR);
 	//
